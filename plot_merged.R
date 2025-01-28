@@ -7,12 +7,13 @@ library(ggplot2)
 
 
 txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene 
-bedtools intersect -a macs/Nfi_1_peaks.narrowPeak -b macs/Nfi_2_peaks.narrowPeak -wo > nfi_peaks.narrowPeak
+
+
+#This merged narrow peaks comming from: bedtools intersect -a macs/Nfi_1_peaks.narrowPeak -b macs/Nfi_2_peaks.narrowPeak -wo > nfi_peaks.narrowPeak
 
 Pfiles <- list.files(path = "/nfs/turbo/umms-thahoang/sherine/GSE181251/", pattern = "\\.narrowPeak$", full.names = TRUE, recursive = TRUE)
 
-peaks=GenomicRanges::GRangesList(Nfi=readPeakFile(Pfiles[[5]]))
-
+peaks=GenomicRanges::GRangesList(Nfi=readPeakFile(Pfiles[[5]])) #To pull the merged version and ignore the rest 
 seqlevels(peaks) <- paste0("chr", seqlevels(peaks))
 
 
