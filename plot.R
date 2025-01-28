@@ -9,7 +9,11 @@ library(ggplot2)
 txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene 
 
 Pfiles <- list.files(path = "/nfs/turbo/umms-thahoang/sherine/GSE181251/macs", pattern = "\\.narrowPeak$", full.names = TRUE, recursive = TRUE)
-peaks = lapply(Pfiles[1:2], readPeakFile) #Ignore NFI_input
+#peaks = lapply(Pfiles[1:2], readPeakFile) #Ignore NFI_input
+
+peaks=GenomicRanges::GRangesList(Nfi_1=readPeakFile(Pfiles[[1]]),
+                                Nfi_2=readPeakFile(Pfiles[[2]]))
+
 
 #In case you wanna read one by one 
 #nfi_1 <- toGRanges("macs/Nfi_1_peaks.narrowPeak", format="narrowPeak", header =FALSE)
@@ -21,6 +25,16 @@ peaks <- lapply(peaks, function(gr) {
     return(gr)
   })
 
+#specific chr, remove parameter for all chromosomes 
+figure_name = paste("Nfi_replicates", "Coverage.pdf", sep="_")
+pdf(file =figure_name)
+#specify a specific peak 
+p <- covplot(peaks, weightCol="V5", chrs=c("chr17"), xlim=c(4.5e7, 4.7e7)) 
+#plot all Chromosomes
+#p <- covplot(peaks)
+col <- c(Nfi_1='red', Nfi_2='green')
+p + facet_grid(chr ~ .id) + scale_color_manual(values=col) + scale_fill_manual(values=col)
+dev.off() 
 
 promoter <- getPromoters(TxDb=txdb, upstream=3000, downstream=3000)
 tagMatrixList <- lapply(peaks, getTagMatrix, windows=promoter) 
@@ -29,11 +43,6 @@ names(tagMatrixList) <- c("Nfi_1", "Nfi_2")
 figure_name = paste("Nfi_replicates", "AvgProfile.pdf", sep="_")
 pdf(file =figure_name)
 plotAvgProf(tagMatrixList, xlim=c(-3000, 3000))
-dev.off() 
-
-figure_name = paste("Nfi_replicates", "RowsAvgProfile.pdf", sep="_")
-pdf(file =figure_name)
-plotAvgProf(tagMatrixList, xlim=c(-3000, 3000), conf=0.95,resample=500, facet="row")
 dev.off() 
 
 
@@ -69,7 +78,6 @@ dev.off()
 
 
 
-peakAnnoList <- list("nfi_1" = peakAnnoList[1], "nfi_2" = peakAnnoList[2])
 figure_name = paste("Nfi_replicates", "DistToTSS.pdf", sep="_")
 pdf(file =figure_name)
 plotDistToTSS(peakAnnoList)
