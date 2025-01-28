@@ -1,0 +1,33 @@
+library(ChIPseeker)
+library(clusterProfiler)
+library(TxDb.Mmusculus.UCSC.mm10.knownGene)
+library(ChIPpeakAnno)
+library(ReactomePA)
+library(ggplot2)
+
+
+txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene 
+bedtools intersect -a macs/Nfi_1_peaks.narrowPeak -b macs/Nfi_2_peaks.narrowPeak -wo > nfi_peaks.narrowPeak
+
+Pfiles <- list.files(path = "/nfs/turbo/umms-thahoang/sherine/GSE181251/", pattern = "\\.narrowPeak$", full.names = TRUE, recursive = TRUE)
+
+peaks=GenomicRanges::GRangesList(Nfi=readPeakFile(Pfiles[[5]]))
+
+seqlevels(peaks) <- paste0("chr", seqlevels(peaks))
+
+
+peakAnnoList <- lapply(peaks, annotatePeak, TxDb=txdb,
+                       tssRegion=c(-3000, 3000), verbose=FALSE)
+
+genes = lapply(peakAnnoList, function(i) as.data.frame(i)$geneId)
+comp  <- compareCluster(
+  geneCluster   = genes,
+  fun           = "enrichKEGG",
+  organism      = "mmu",
+  pvalueCutoff  = 0.01,
+  pAdjustMethod = "BH")
+
+figure_name = paste("Nfi_replicates", "KEGGpathways.pdf", sep="_")
+pdf(file =figure_name)
+dotplot(comp , showCategory = 10, title = "KEGG Pathway Enrichment Analysis") + theme(axis.text.x = element_text(size = 8)) 
+dev.off() 
