@@ -32,7 +32,21 @@ comp  <- compareCluster(
 comp_df <- as.data.frame(comp)
 write.csv(comp_df, "compareClusterResult.csv", row.names = FALSE)
 
-figure_name = paste("Nfi_replicates", "KEGGpathways.pdf", sep="_")
+
+#Plot selected pathways
+figure_name = paste("Nfi", "KEGGSelectedpathways.pdf", sep="_")
+pdf(file =figure_name)
+enriched_results <- comp@compareClusterResult
+selected_pathway_names <- c("PI3K-Akt signaling pathway - Mus musculus (house mouse)", "Ras signaling pathway - Mus musculus (house mouse)")
+selected_pathways <- enriched_results[enriched_results$Description %in% selected_pathway_names, ]
+dotplot(comp, showCategory = selected_pathway_names)
+dev.off()
+
+
+
+
+
+figure_name = paste("Nfi", "KEGGpathways.pdf", sep="_")
 pdf(file =figure_name)
 dotplot(comp , showCategory = 10, title = "KEGG Pathway Enrichment Analysis") + theme(axis.text.x = element_text(size = 8)) 
 dev.off() 
