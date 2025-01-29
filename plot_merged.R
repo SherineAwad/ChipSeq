@@ -28,6 +28,10 @@ comp  <- compareCluster(
   pvalueCutoff  = 0.01,
   pAdjustMethod = "BH")
 
+
+comp_df <- as.data.frame(comp)
+write.csv(comp_df, "compareClusterResult.csv", row.names = FALSE)
+
 figure_name = paste("Nfi_replicates", "KEGGpathways.pdf", sep="_")
 pdf(file =figure_name)
 dotplot(comp , showCategory = 10, title = "KEGG Pathway Enrichment Analysis") + theme(axis.text.x = element_text(size = 8)) 
