@@ -32,18 +32,21 @@ comp  <- compareCluster(
 comp_df <- as.data.frame(comp)
 write.csv(comp_df, "compareClusterResult.csv", row.names = FALSE)
 
+#Remove the  - Mus musculus (house mouse suffix 
+comp@compareClusterResult$Description <- gsub(" - Mus musculus \\(house mouse\\)", "", comp@compareClusterResult$Description)
+
 
 #Plot selected pathways
+enriched_results <- comp@compareClusterResult
+selected_pathway_names <- c("Rap1 signaling pathway", "Hippo signaling pathway",
+"Signaling pathways regulating pluripotency of stem cells","Wnt signaling pathway","MAPK signaling pathway","PI3K-Akt signaling pathway","Ras signaling pathway","Notch signaling pathway","Cell cycle","Polycomb repressive complex","Hippo signaling pathway - multiple species")
+selected_pathways <- enriched_results[enriched_results$Description %in% selected_pathway_names, ]
+
 figure_name = paste("Nfi", "KEGGSelectedpathways.pdf", sep="_")
 pdf(file =figure_name)
-enriched_results <- comp@compareClusterResult
-selected_pathway_names <- c("PI3K-Akt signaling pathway - Mus musculus (house mouse)", "Ras signaling pathway - Mus musculus (house mouse)")
-selected_pathways <- enriched_results[enriched_results$Description %in% selected_pathway_names, ]
-dotplot(comp, showCategory = selected_pathway_names)
+#dotplot(comp, showCategory = selected_pathway_names)
+dotplot(comp,  x = "Count", color = "p.adjust",showCategory = selected_pathway_names)
 dev.off()
-
-
-
 
 
 figure_name = paste("Nfi", "KEGGpathways.pdf", sep="_")
