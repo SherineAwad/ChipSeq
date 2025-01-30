@@ -125,8 +125,8 @@ rule macs_bed:
 
 rule annotateNarrowPeaks: 
       input: 
-          "Nfi_1_peaks.narrowPeak",
-          "Nfi_2_peaks.narrowPeak"
+          "macs/Nfi_1_peaks.narrowPeak",
+          "macs/Nfi_2_peaks.narrowPeak"
       params: 
            genome= config['GENOME'], 
            gtf = config['GTF']  
