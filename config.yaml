@@ -2,8 +2,6 @@
 #General Parameters 
 #---------------------------------------------------
 SAMPLES: "samples.tsv"
-WT: "WT.tsv"
-nWT: "nWT.tsv" 
 MEMORY: "-Xmx20g" #for 20giga, change as much giga as you have 
 CORES: 8
 #------------------------------------------------------------------
