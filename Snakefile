@@ -1,12 +1,6 @@
 with open(config['SAMPLES']) as fp:
     samples = fp.read().splitlines()
 
-with open(config['WT']) as fp:
-    WT = fp.read().splitlines()
-
-with open(config['nWT']) as fp:
-    nWT = fp.read().splitlines()
-
 
 rule all:
          input:
